@@ -49,6 +49,7 @@ const ICONS = {
   convertManual: icon('solar:document-text-bold'),
   convertBulk: icon('fluent:document-multiple-24-filled'),
   howToUse: icon('fluent:book-open-24-filled'),
+  subscription: icon('solar:bill-list-bold'),
 
   blog: icon('mdi:blog'),
   chat: icon('fluent:chat-24-filled'),
@@ -88,6 +89,7 @@ export function useNavData() {
           { title: 'Manual Convert', path: paths.dashboard.convert.manual, icon: ICONS.convertManual },
           { title: 'Bulk Convert', path: paths.dashboard.convert.bulk, icon: ICONS.convertBulk },
           { title: 'How To Use', path: paths.dashboard.howToUse, icon: ICONS.howToUse },
+          { title: 'Subscription', path: paths.dashboard.subscription, icon: ICONS.subscription },
         ],
       },
 

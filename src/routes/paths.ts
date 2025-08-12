@@ -38,6 +38,11 @@ export const paths = {
     },
     allDraft: `${ROOTS.DASHBOARD}/all-drafts`,
     howToUse: `${ROOTS.DASHBOARD}/how-to-use`,
+    subscription: ((to?: string) => {
+  let url = `${ROOTS.DASHBOARD}/account`;
+  if (to) url += `?to=${to}`;
+  return url;
+})('subscription'),
     convert: {
       bulk: `${ROOTS.DASHBOARD}/convert/bulk`,
       manual: `${ROOTS.DASHBOARD}/convert/manual`,
