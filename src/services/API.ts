@@ -11,7 +11,7 @@ const LIVE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
  */
 
 // const LOCAL_URL = "http://localhost:8080";
-const LOCAL_URL = "http://127.0.0.1:8080";
+const LOCAL_URL = "http://192.168.0.102:8080";
 /**
  * Base URL that will be treated as global start-point.
  */
