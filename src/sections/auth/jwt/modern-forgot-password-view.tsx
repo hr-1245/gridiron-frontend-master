@@ -16,7 +16,7 @@ import { PasswordIcon } from 'src/assets/icons';
 
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
-import { useRouter } from "src/routes/hooks/index"
+import { useRouter } from 'src/routes/hooks/index';
 import Toaster from 'src/utils/toaster';
 import { POST } from 'src/services/AxiosRequest';
 import URL from 'src/services/API';
@@ -46,12 +46,18 @@ export default function ModernForgotPasswordView() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       data.email = data.email.toLowerCase();
-      const res = await POST(URL.AUTH_FORGET_PASSWORD, { email: data.email })
-      router.push(paths.auth.jwt.verify(data.email))
-      Toaster("success", res.message, true);
-    } catch (error) {
+      const res = await POST(URL.AUTH_FORGET_PASSWORD, { email: data.email });
+      router.push(paths.auth.jwt.verify(data.email));
+      Toaster('success', res.message, true);
+    } catch (error: any) {
       console.error(error);
-      Toaster("error", error.response.data.message, true);
+      const message =
+        error?.response?.data?.message ||
+        (error.code === 'ERR_NETWORK'
+          ? 'Network or SSL error. Please try again later.'
+          : error.message) ||
+        'Something went wrong';
+      Toaster('error', message, true);
     }
   });
 
