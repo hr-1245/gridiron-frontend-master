@@ -79,7 +79,7 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
 
 
   const renderPlans = plans.map((plan) => (
-    <Grid xs={12} md={6} key={plan.subscription}>
+    <Grid xs={12} md={4} key={plan.subscription}>
       <Stack
         component={Paper}
         variant="outlined"
@@ -118,6 +118,7 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
         <Box sx={{ width: 48, height: 48 }}>
           {plan.subscription === 'basic' && <PlanFreeIcon />}
           {plan.subscription === 'regular' && <PlanStarterIcon />}
+          {plan.subscription === 'Coupon Code' && <PlanStarterIcon />}
         </Box>
 
         {/* Plan Name */}
