@@ -184,12 +184,7 @@ export const _userPlans = [
     primary: false,
     features: ['Unlimited Player Conversions', 'Access to Manual Conversions',  'Access Previous Converted Player Data','Full Access to Bulk Image Upload Feature'],
   },
-   {
-    subscription: 'Coupon Code',
-    price: 19.99,
-    primary: false,
-    features: ['Unlimited Player Conversions', 'Access to Manual Conversions',  'Access Previous Converted Player Data','Full Access to Bulk Image Upload Feature'],
-  },
+
 ];
 
 export const _userList = [...Array(20)].map((_, index) => ({

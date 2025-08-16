@@ -49,6 +49,7 @@ export default function PlayerManualView() {
     console.log("🚀 ~ PlayerManualView ~ draftFolderOptions:", draftFolderOptions)
     const onSubmit = async (data: any) => {
         try {
+            debugger
             setLoading(true)
             const res = await POST(URL.CONVERT_PLAYER_MANUALLY, data);
             console.log(res.message);
@@ -56,6 +57,7 @@ export default function PlayerManualView() {
             setLoading(false)
             router.push(paths.dashboard.allDraft)
         } catch (error) {
+            debugger
             setLoading(false)
             Toaster("error", error.response.data.message);
             console.log("🚀 ~ onSubmit ~ error:", error);
@@ -66,9 +68,11 @@ export default function PlayerManualView() {
 
     const getPositions = async () => {
         try {
+            debugger
             const res = await GET(URL.GET_POSITIONS_DROPDOWN);
             setPositions(res.data)
         } catch (error) {
+            debugger
             console.log("🚀 ~ getPositions ~ error:", error)
         }
     }

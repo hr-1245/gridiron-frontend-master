@@ -18,7 +18,7 @@ import Iconify from 'src/components/iconify';
 
 import { IPaymentCard } from 'src/types/payment';
 import { IAddressItem } from 'src/types/address';
-import { Tooltip, Typography } from '@mui/material';
+import { TextField, Tooltip, Typography } from '@mui/material';
 import { UpgradeModal } from './upgrade-modal';
 import { useAppSelector } from 'src/redux/hook';
 import { RootState } from 'src/redux/store';
@@ -50,6 +50,10 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
   const userPlan = user?.subscription?.planType
   const primaryCard = cardList.filter((card) => card.primary)[0];
 
+  const [couponCode, setCouponCode] = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [discount, setDiscount] = useState<number | null>(null);
+
   const [selectedPlan, setSelectedPlan] = useState(userPlan ?? '');
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -76,10 +80,22 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
       Toaster("error", error.response.data.message);
     }
   }
-
+  const applyCoupon = async () => {
+    setCouponLoading(true);
+    try {
+      // const res = await POST(URL.APPLY_COUPON, { code: couponCode });
+      // setDiscount(res.data?.discountAmount ?? 0);
+      // Toaster('success', `Coupon applied! You saved $${res.data?.discountAmount}`);
+    } catch (err) {
+      Toaster('error', err.response?.data?.message || 'Invalid coupon');
+      setDiscount(null);
+    } finally {
+      setCouponLoading(false);
+    }
+  };
 
   const renderPlans = plans.map((plan) => (
-    <Grid xs={12} md={4} key={plan.subscription}>
+    <Grid xs={12} md={6} key={plan.subscription}>
       <Stack
         component={Paper}
         variant="outlined"
@@ -98,8 +114,8 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
             ...(plan.primary
               ? {}
               : {
-                boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}`,
-              }),
+                  boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}`,
+                }),
           },
         }}
       >
@@ -118,7 +134,6 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
         <Box sx={{ width: 48, height: 48 }}>
           {plan.subscription === 'basic' && <PlanFreeIcon />}
           {plan.subscription === 'regular' && <PlanStarterIcon />}
-          {plan.subscription === 'Coupon Code' && <PlanStarterIcon />}
         </Box>
 
         {/* Plan Name */}
@@ -129,7 +144,11 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
         {/* Plan Price */}
         <Stack direction="row" alignItems="baseline" spacing={0.5}>
           <Typography variant="h4">
-            {plan.price ? `$${plan.price}` : 'Free'}
+            {plan.price
+              ? selectedPlan === 'regular' && discount
+                ? `$${(plan.price - discount).toFixed(2)}`
+                : `$${plan.price}`
+              : 'Free'}
           </Typography>
           {!!plan.price && (
             <Typography variant="body2" color="text.secondary">
@@ -141,12 +160,7 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
         {/* Plan Features */}
         <Stack spacing={1} sx={{ mt: 2 }}>
           {plan.features.map((feature, index) => (
-            <Stack
-              key={index}
-              direction="row"
-              alignItems="center"
-              spacing={1}
-            >
+            <Stack key={index} direction="row" alignItems="center" spacing={1}>
               <Iconify
                 icon="eva:checkmark-circle-2-fill"
                 width={20}
@@ -164,7 +178,7 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
 
   return (
     <>
-      <Card>
+      {/* <Card>
         <CardHeader title="Enjoy Unlimited Player Conversions on Regular Plan!" />
 
         <Grid container spacing={2} sx={{ p: 3 }}>
@@ -219,8 +233,102 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
         </Stack>
       </Card>
 
-      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
+      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} /> */}
+ <Card>
+        <CardHeader title="Enjoy Unlimited Player Conversions on Regular Plan!" />
 
+        <Grid container spacing={2} sx={{ p: 3 }}>
+          {renderPlans}
+        </Grid>
+
+        <Stack spacing={2} sx={{ p: 3, pt: 0, typography: 'body2' }}>
+          <Grid container spacing={{ xs: 0.5, md: 2 }}>
+            <Grid xs={12} md={4} sx={{ color: 'text.secondary' }}>
+              Plan
+            </Grid>
+            <Grid
+              xs={12}
+              md={8}
+              sx={{ typography: 'subtitle2', textTransform: 'capitalize' }}
+            >
+              {selectedPlan || '-'}
+            </Grid>
+          </Grid>
+        </Stack>
+
+        {/* Coupon field only if user selects regular */}
+        {selectedPlan === 'regular' && (
+          <Stack spacing={2} sx={{ p: 3 }}>
+            <Typography variant="subtitle2">Have a Coupon?</Typography>
+            <Stack direction="row" spacing={2}>
+              <TextField
+                size="small"
+                label="Coupon Code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+              />
+              <Button
+                variant="outlined"
+                disabled={couponLoading || !couponCode}
+                onClick={applyCoupon}
+              >
+                {couponLoading ? 'Applying...' : 'Apply'}
+              </Button>
+            </Stack>
+            {discount !== null && (
+              <Typography variant="body2" color="success.main">
+                Discount applied: -${discount}
+              </Typography>
+            )}
+          </Stack>
+        )}
+
+        <Divider sx={{ borderStyle: 'dashed' }} />
+
+        <Stack
+          spacing={1.5}
+          direction="row"
+          justifyContent="flex-end"
+          sx={{ p: 3 }}
+        >
+          {userPlan !== 'regular' ? (
+            <Tooltip title="You can only cancel if you're on the regular plan">
+              <span>
+                <Button variant="outlined" disabled>
+                  Cancel Plan
+                </Button>
+              </span>
+            </Tooltip>
+          ) : (
+            <Button
+              variant="outlined"
+              onClick={cancelSubscription}
+              disabled={loading}
+            >
+              {loading ? 'Cancelling...' : 'Cancel Plan'}
+            </Button>
+          )}
+          {userPlan !== 'regular' ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setUpgradeOpen(true)}
+            >
+              Upgrade Plan
+            </Button>
+          ) : (
+            <Tooltip title="You're already on the regular plan">
+              <span>
+                <Button variant="contained" disabled>
+                  Upgrade Plan
+                </Button>
+              </span>
+            </Tooltip>
+          )}
+        </Stack>
+      </Card>
+
+      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
     </>
   );
 }

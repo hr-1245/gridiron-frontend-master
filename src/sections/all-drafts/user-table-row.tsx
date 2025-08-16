@@ -74,7 +74,7 @@ export default function UserTableRow({
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{college}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{position.name}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{position?.name}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{projectedReason}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{overallRating}</TableCell>
