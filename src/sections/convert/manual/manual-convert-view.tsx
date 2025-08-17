@@ -18,7 +18,14 @@ import URL from 'src/services/API';
 import Toaster from 'src/utils/toaster';
 import { useRouter } from 'next/navigation';
 
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 
+} from "@mui/material";
 // ----------------------------------------------------------------------
 
 export default function PlayerManualView() {
@@ -28,7 +35,7 @@ export default function PlayerManualView() {
 
     const [activeStep, setActiveStep] = useState(0);
     const [loading, setLoading] = useState(false);
-
+  const [popupMessage, setPopupMessage] = useState("");
 
     const methods = useForm({
         defaultValues: {
@@ -46,10 +53,10 @@ export default function PlayerManualView() {
     const draftFolderName = watch('draftFolderName');
     const [positions, setPositions] = useState<IPosition[]>([]);
     const [draftFolderOptions, setDraftFolderOptions] = useState<string[]>([]);
+      const [open, setOpen] = useState(false);
     console.log("🚀 ~ PlayerManualView ~ draftFolderOptions:", draftFolderOptions)
     const onSubmit = async (data: any) => {
         try {
-            debugger
             setLoading(true)
             const res = await POST(URL.CONVERT_PLAYER_MANUALLY, data);
             console.log(res.message);
@@ -57,9 +64,10 @@ export default function PlayerManualView() {
             setLoading(false)
             router.push(paths.dashboard.allDraft)
         } catch (error) {
-            debugger
             setLoading(false)
-            Toaster("error", error.response.data.message);
+                setPopupMessage(error.response.data.message);
+        setOpen(true);
+            // Toaster("error", error.response.data.message);
             console.log("🚀 ~ onSubmit ~ error:", error);
         }
 
@@ -94,7 +102,13 @@ export default function PlayerManualView() {
 
     }, [])
 
-
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleGoToSubscription = () => {
+    setOpen(false);
+    router.push(paths.dashboard.subscription); // Redirect to subscription page
+  };
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
             <CustomBreadcrumbs
@@ -225,6 +239,32 @@ export default function PlayerManualView() {
                     </Box>
                 </FormProvider>
             </Card>
+
+
+
+                 <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="subscription-dialog-title"
+        aria-describedby="subscription-dialog-description"
+      >
+        <DialogTitle id="subscription-dialog-title">
+          Upgrade Required
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="subscription-dialog-description">
+            {popupMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleGoToSubscription} color="primary" variant="contained" autoFocus>
+            Go to Subscription
+          </Button>
+        </DialogActions>
+      </Dialog>
         </Container>
     );
 }

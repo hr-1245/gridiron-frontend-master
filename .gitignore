@@ -17,8 +17,6 @@ dist
 build
 
 # environment variables
-.env
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -29,8 +27,8 @@ build
 .netlify
 .unimportedrc.json
 tsconfig.tsbuildinfo
-.vscode
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+config.bat
